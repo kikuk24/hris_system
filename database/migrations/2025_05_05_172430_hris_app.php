@@ -11,23 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create("employees", function (Blueprint $table) {
-            $table->id();
-            $table->string("name");
-            $table->string("email")->unique();
-            $table->string("phone_number");
-            $table->string("address");
-            $table->date("birth_date");
-            $table->date("hire_date");
-            $table->foreignKey("department_id")->constrained("departments");
-            $table->foreignKey("role_id")->constrained("roles");
-            $table->string("status");
-            $table->decimal("salary", 10, 2)->default(0);
-
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
         Schema::create("departments", function (Blueprint $table) {
             $table->id();
             $table->string("name");
@@ -36,7 +19,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-
         Schema::create("roles", function (Blueprint $table) {
             $table->id();
             $table->string("title");
@@ -44,11 +26,31 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+        Schema::create("employees", function (Blueprint $table) {
+            $table->id();
+            $table->string("name");
+            $table->string("email")->unique();
+            $table->string("phone_number");
+            $table->string("address");
+            $table->date("birth_date");
+            $table->date("hire_date");
+            $table->foreignId("department_id")->constrained("departments");
+            $table->foreignId("role_id")->constrained("roles");
+            $table->string("status");
+            $table->decimal("salary", 10, 2)->default(0);
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        
+
+        
         Schema::create("tasks", function (Blueprint $table) {
             $table->id();
             $table->string("title");
             $table->text("description")->nullable();
-            $table->foreignKey("assigned_to")->constrained("employees");
+            $table->foreignId("assigned_to")->constrained("employees");
             $table->date("due_date");
             $table->string("status");
             $table->timestamps();
@@ -57,7 +59,7 @@ return new class extends Migration
 
         Schema::create("payroles", function (Blueprint $table) {
             $table->id();
-            $table->foreignKey("employee_id")->constrained("employees")->onDelete();
+            $table->foreignId("employee_id")->constrained("employees");
             $table->decimal("salary", 10, 2);
             $table->decimal("bonuses", 10, 2)->nullable();
             $table->decimal("deductions", 10, 2)->nullable();
@@ -69,7 +71,7 @@ return new class extends Migration
 
         Schema::create("presenses", function (Blueprint $table) {
             $table->id();
-            $table->foreignKey("employee_id")->constrained("employees")->onDelete();
+            $table->foreignId("employee_id")->constrained("employees");
             $table->date("check_in");
             $table->date("check_out");
             $table->date("date");
@@ -80,7 +82,7 @@ return new class extends Migration
 
         Schema::create("leave_requests", function (Blueprint $table) {
             $table->id();
-            $table->foreignKey("employee_id")->constrained("employees")->onDelete();
+            $table->foreignId("employee_id")->constrained("employees");
             $table->string("leave_type");
             $table->date("start_date");
             $table->date("end_date");
